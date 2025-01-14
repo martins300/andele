@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    image: laravel-app
+    container_name: laravel-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      APP_NAME: Laravel
+      APP_ENV: production
+      APP_TIMEZONE: UTC
+      APP_URL: http://localhost
+      SESSION_DRIVER: file
+    working_dir: /var/www
+    volumes:
+      - ./docker-compose/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  webserver:
+    image: nginx:alpine
+    container_name: nginx-webserver
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./andele-backend/public:/var/www/public
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  web-node:
+    build:
+      context: .
+      dockerfile: node.dockerfile
+    image: web-node 
+    container_name: web-node
+    restart: unless-stopped
+    volumes:
+      - ./docker-compose/nginx-node:/etc/nginx/conf.d/  
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

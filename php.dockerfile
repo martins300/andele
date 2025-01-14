@@ -34,9 +34,6 @@ RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoload
 # ch owner to www-data 
 RUN chown -R www-data:www-data /var/www/
 
-# ch owner to www-data 
-#RUN chmod -R 777 /var/www/storage/
-
 # Change current user to www
 USER www-data
 
@@ -44,7 +41,7 @@ USER www-data
 EXPOSE 9000
 
 # Copy .env.example to .env if .env does not exist
-#RUN cp .env.example .env
+RUN cp .env.example .env
 
 # Generate application key
 RUN php artisan key:generate
